@@ -12,8 +12,8 @@ const getReqConfig = {
   reqHeaders: {
     "Content-type": "application/json"
   },
-  isPaginated: true,
-  paginationKey: 'page',
+  isPaginated: false,
+  paginationKey: '',
   errorComponent: <div>Some Error</div>,
 };
 

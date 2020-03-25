@@ -30,8 +30,12 @@ const useGet = config => {
         let url = endpoint;
         if(query) {
             url += '?';
-            Object.keys(query).forEach(q => {
-                url += `${q}=${query[q]},`;
+            const queryKeys = Object.keys(query);
+            queryKeys.forEach((q, i) => {
+                url += `${q}=${query[q]}`;
+                if(i < queryKeys.length - 1) {
+                    url += ',';
+                }
             });
         }
         if(isPaginated) {
