@@ -1,15 +1,14 @@
 import React from 'react';
 import axios from 'axios';
+import {defaultDeleteConfig} from './default-config';
 
-const useDelete = (passed_headers) => {
-    const default_headers = {
-        'Content-Type': 'application/json',
-    };
+const useDelete = config => {
+    const {reqHeaders, errorComponent} = config || defaultDeleteConfig;
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [response, setResponse] = React.useState(null);
     const [last, setLast] = React.useState(null);
-    const [headers, setHeaders] = React.useState(passed_headers || default_headers);
+    const [headers, setHeaders] = React.useState(reqHeaders);
 
     const modifyHeaders = customHeaders => setHeaders({...headers, ...customHeaders});
 
@@ -38,7 +37,7 @@ const useDelete = (passed_headers) => {
                 setLast(req);
             })
             .catch(e => {
-                setError('Error Deleting Data');
+                setError(errorComponent);
                 setIsLoading(false);
             });
     };

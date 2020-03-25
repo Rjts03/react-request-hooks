@@ -1,16 +1,15 @@
 import React from 'react';
 import axios from 'axios';
+import {defaultPutConfig} from './default-config';
 
-const usePut = (passed_headers) => {
-    const default_headers = {
-        'Content-Type': 'application/json',
-    };
+const usePut = config => {
+    const {reqHeaders, errorComponent} = config || defaultPutConfig;
 
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [response, setResponse] = React.useState(null);
     const [last, setLast] = React.useState(null);
-    const [headers, setHeaders] = React.useState(passed_headers || default_headers);
+    const [headers, setHeaders] = React.useState(reqHeaders);
 
     const modifyHeaders = customHeaders => setHeaders({...headers, ...customHeaders});
 
@@ -37,7 +36,7 @@ const usePut = (passed_headers) => {
                 setLast(req);
             })
             .catch(e => {
-                setError('Error Updating Data');
+                setError(errorComponent);
                 setIsLoading(false);
             });
     };

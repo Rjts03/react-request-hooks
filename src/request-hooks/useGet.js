@@ -1,18 +1,20 @@
 import React from 'react';
 import axios from 'axios';
+import {defaultGetConfig} from './default-config';
 
-const useGet = (passed_headers) => {
-    const default_headers = {
-        'Content-Type': 'application/json',
-    };
+const useGet = config => {
+    const {reqHeaders, isPaginated, paginationKey, errorComponent} = config || defaultGetConfig;
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
     const [response, setResponse] = React.useState(null);
     const [isEmpty, setIsEmpty] = React.useState(false);
     const [last, setLast] = React.useState(null);
-    const [headers, setHeaders] = React.useState(passed_headers || default_headers);
+    const [headers, setHeaders] = React.useState(reqHeaders);
+    const [pageNumber, setPageNumber] = React.useState(1);
 
     const modifyHeaders = customHeaders => setHeaders({...headers, ...customHeaders});
+    
+    const resetPagination = () => setPageNumber(1);
 
     const resetStates = () => {
         setIsLoading(true);
@@ -20,6 +22,7 @@ const useGet = (passed_headers) => {
         setError(null);
         setIsEmpty(false);
         setLast(null);
+        setPageNumber(1);
     };
 
     const request = (req) => {
@@ -28,14 +31,18 @@ const useGet = (passed_headers) => {
         if(query) {
             url += '?';
             Object.keys(query).forEach(q => {
-                url += `${q}=${query[q]}`;
+                url += `${q}=${query[q]},`;
             });
+        }
+        if(isPaginated) {
+            url += `${paginationKey}=${pageNumber}`;
         }
         axios
             .get(url, headers)
             .then(res => {
                 if(res.data.length > 0) {
                     setResponse(res.data);
+                    setPageNumber(pageNumber + 1);
                 }else {
                     setIsEmpty(true);
                 }
@@ -43,7 +50,7 @@ const useGet = (passed_headers) => {
                 setLast(req);
             })
             .catch(e => {
-                setError('Error Loading Data');
+                setError(errorComponent);
                 setIsLoading(false);
             });
     };
@@ -80,6 +87,7 @@ const useGet = (passed_headers) => {
             request,
             retry,
             modifyHeaders,
+            resetPagination,
         },
     ];
 };

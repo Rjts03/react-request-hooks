@@ -1,20 +1,33 @@
 import React from 'react'
 import { useGet, usePost, useDelete, usePut } from '../request-hooks';
 
-const pHeaders = {
-    "Content-type": "application/json; charset=UTF-8"
-}
+const pReqConfig = {
+    reqHeaders: {
+      "Content-type": "application/json; charset=UTF-8"
+    },
+    errorComponent: <div>Some Error</div>,
+};
+
+const getReqConfig = {
+  reqHeaders: {
+    "Content-type": "application/json"
+  },
+  isPaginated: true,
+  paginationKey: 'page',
+  errorComponent: <div>Some Error</div>,
+};
 
 const ComOne = () => {
-  const [states, methods] = useGet();
-  const [pStates, pMethods] = usePost(pHeaders);
+  const [states, methods] = useGet(getReqConfig);
+  const [pStates, pMethods] = usePost(pReqConfig);
   const [dStates, dMethods] = useDelete();
-  const [puStates, puMethods] = usePut(pHeaders);
+  const [puStates, puMethods] = usePut(pReqConfig);
 
   React.useEffect(() => {
     const endpoint = 'https://jsonplaceholder.typicode.com/posts';
     const query = {userId:1};
     methods.request({endpoint, query});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRetry = () => {
