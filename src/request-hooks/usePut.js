@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const usePost = (passed_headers) => {
+const usePut = (passed_headers) => {
     const default_headers = {
         'Content-Type': 'application/json',
     };
@@ -23,17 +23,21 @@ const usePost = (passed_headers) => {
 
     const request = (req) => {
         setIsLoading(true);
-        const {endpoint, body} = req;
-        const url = endpoint;
+        const {endpoint, body, params} = req;
+        let url = endpoint;
+        if(params) {
+            url += '/';
+            url += `${params.id}`;
+        }
         axios
-            .post(url, body, headers)
+            .put(url, body, headers)
             .then(res => {
                 setResponse(res.data);
                 setIsLoading(false);
                 setLast(req);
             })
             .catch(e => {
-                setError('Error Posting Data');
+                setError('Error Updating Data');
                 setIsLoading(false);
             });
     };
@@ -73,4 +77,4 @@ const usePost = (passed_headers) => {
     ];
 };
 
-export default usePost;
+export default usePut;
